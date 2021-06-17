@@ -92,10 +92,18 @@ func main() {
         } else {
             // do nothing
         }
-	// Append data from UpstreamState
 	// Common data
         host.Hostname = client.Hostname
         host.MAC = client.MAC
+
+	// Append data from UpstreamState
+	var upstreamState UpstreamState
+	upstreamState.Down = client.Down
+	upstreamState.Up = client.Up
+	upstreamState.ActiveTime = client.ActiveTime
+	upstreamState.LinkType = client.LinkType
+	upstreamState.Upstream = client.Upstream
+	host.UpstreamState = append(host.UpstreamState, upstreamState)
 
 	// store back
 	hostState[client.IP] = host
@@ -103,6 +111,10 @@ func main() {
         // fmt.Printf("%-20s %-15s %-17s\n", clients[i].Hostname, clients[i].IP, clients[i].MAC)
     }
     for k, v := range hostState {
-        fmt.Printf("%-20s %-15s %-17s %s\n", v.Hostname, k, v.MAC, v.RttMs)
+        fmt.Printf("%-20s %-15s %s", v.Hostname, k, v.RttMs)
+	for _, u := range v.UpstreamState {
+		fmt.Printf(" (%s %s)", u.Upstream, u.ActiveTime)
+	}
+	fmt.Printf("\n")
     }
 }
