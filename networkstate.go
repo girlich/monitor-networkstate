@@ -1,10 +1,13 @@
 package main
 
 import (
+    "bytes"
     "flag"
     "fmt"
     "io/ioutil"
     "log"
+    "net"
+    "sort"
 
     "gopkg.in/yaml.v2"
 )
@@ -58,8 +61,6 @@ func main() {
     pingerFilePtr := flag.String("ping","ping.json","Output file from pinger")
     wificlientsFilePtr := flag.String("wifi","wifi.yml","Output file from wificlients")
     flag.Parse()
-    fmt.Println("ping:",*pingerFilePtr)
-    fmt.Println("wifi:",*wificlientsFilePtr)
 
     b, err := ioutil.ReadFile(*pingerFilePtr)
     if err != nil {
@@ -108,10 +109,22 @@ func main() {
 
 	// store back
 	hostState[client.IP] = host
-
-        // fmt.Printf("%-20s %-15s %-17s\n", clients[i].Hostname, clients[i].IP, clients[i].MAC)
     }
-    for k, v := range hostState {
+    // Slice with all IP addresses
+    IPs := make([]string, 0, len(hostState))
+    for k, _ := range hostState {
+        IPs = append(IPs, k)
+    }
+    sort.Strings(IPs)
+    // sort slice IPs according to the actual IP value
+    sort.Slice(
+        IPs,
+        func(i, j int) bool {
+            return bytes.Compare(
+              net.ParseIP(IPs[i]), net.ParseIP(IPs[j]))<0
+        })
+    for _, k := range IPs {
+        v := hostState[k]
         fmt.Printf("%-20s %-15s %s\n", v.Hostname, k, v.RttMs)
 	for _, u := range v.UpstreamState {
 		fmt.Printf(" @ %s since %s\n", u.Upstream, u.ActiveTime)
