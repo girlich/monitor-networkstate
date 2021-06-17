@@ -8,6 +8,7 @@ import (
     "log"
     "net"
     "sort"
+    "strings"
 
     "gopkg.in/yaml.v2"
 )
@@ -105,6 +106,7 @@ func main() {
 	upstreamState.ActiveTime = client.ActiveTime
 	upstreamState.LinkType = client.LinkType
 	upstreamState.Upstream = client.Upstream
+	upstreamState.WiFi = client.WiFi
 	host.UpstreamState = append(host.UpstreamState, upstreamState)
 
 	// store back
@@ -127,7 +129,14 @@ func main() {
         v := hostState[k]
         fmt.Printf("%-20s %-15s %s\n", v.Hostname, k, v.RttMs)
 	for _, u := range v.UpstreamState {
-		fmt.Printf(" @ %s since %s\n", u.Upstream, u.ActiveTime)
+		fmt.Printf(" @ %s since %s ↑/B: %v, ↓/B: %v, %vGHz %vdBm %vMbps\n",
+		               u.Upstream,
+			                strings.Replace(u.ActiveTime, " days", "d", 1),
+					            u.Up,
+						                   u.Down,
+								       map[int]string{0:"2.4", 1:"5"}[u.WiFi.Radio],
+								             u.WiFi.RSSI,
+                                                                                   u.WiFi.Rate)
 	}
     }
 }
