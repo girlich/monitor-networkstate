@@ -35,7 +35,22 @@ type NetworkClient struct {
     LinkType   string `yaml:"linktype"`
     Upstream   string `yaml:"Upstream"`
     WiFi       WiFiParam `yaml:"WiFi,omitempty"`
-    Ping       Host 
+}
+
+type HostState struct {
+	Hostname string 
+	MAC string
+	RttMs string
+	UpstreamState []UpstreamState
+}
+
+type UpstreamState struct {
+	Down       int
+	Up         int
+	ActiveTime string
+	LinkType   string
+	Upstream   string
+	WiFi       WiFiParam
 }
 
 func main() {
@@ -59,23 +74,35 @@ func main() {
     var clients []NetworkClient
     yaml.Unmarshal(b, &clients)
 
-    c := make(map[string]NetworkClient)
-    for i := 0; i<len(network.Hosts); i++ {
-        if network.Hosts[i].Answer {
-            c[network.Hosts[i].Ip] = NetworkClient{Ping: Host{RttMs: network.Hosts[i].RttMs}}
-//            fmt.Printf("%20s %15s\n", " ", network.Hosts[i].Ip)
+    // Combined database
+    hostState := make(map[string]HostState)
+
+    // Fill data from ping
+    for _, host := range network.Hosts {
+        if host.Answer {
+	    hostState[host.Ip] = HostState{RttMs: host.RttMs}
         }
     }
-    for i := 0 ; i<len(clients) ; i++ {
-        if client, ok := c[clients[i].IP] ; ok {
-            c[clients[i].IP].Hostname = clients[i].Hostname
-            c[clients[i].IP].MAC = clients[i].MAC
+    // Fill data from Access Points
+    for _, client := range clients {
+	var host HostState
+	var ok bool
+        if host, ok = hostState[client.IP] ; ok {
+            // do nothing
         } else {
-            c[clients[i].IP] = clients[i]
+            // do nothing
         }
+	// Append data from UpstreamState
+	// Common data
+        host.Hostname = client.Hostname
+        host.MAC = client.MAC
+
+	// store back
+	hostState[client.IP] = host
+
         // fmt.Printf("%-20s %-15s %-17s\n", clients[i].Hostname, clients[i].IP, clients[i].MAC)
     }
-    for k, v := range c {
-        fmt.Printf("%-20s %-15s %-17s %s\n", v.Hostname, k, v.MAC, v.Ping.RttMs)
+    for k, v := range hostState {
+        fmt.Printf("%-20s %-15s %-17s %s\n", v.Hostname, k, v.MAC, v.RttMs)
     }
 }
