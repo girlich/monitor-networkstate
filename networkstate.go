@@ -10,9 +10,10 @@ import (
 )
 
 type Host struct {
-    Ip string `yaml:"ip"`
-    Answer bool `yaml:"answer"`
-    RttMs string `yaml:"rtt"`
+    Ip     string `yaml:"ip"`
+    Name   string `yaml:"name"`
+    Answer bool   `yaml:"answer"`
+    RttMs  string `yaml:"rtt"`
 }
 
 type Network struct {
@@ -80,7 +81,7 @@ func main() {
     // Fill data from ping
     for _, host := range network.Hosts {
         if host.Answer {
-	    hostState[host.Ip] = HostState{RttMs: host.RttMs}
+		hostState[host.Ip] = HostState{RttMs: host.RttMs, Hostname: host.Name}
         }
     }
     // Fill data from Access Points
@@ -111,10 +112,9 @@ func main() {
         // fmt.Printf("%-20s %-15s %-17s\n", clients[i].Hostname, clients[i].IP, clients[i].MAC)
     }
     for k, v := range hostState {
-        fmt.Printf("%-20s %-15s %s", v.Hostname, k, v.RttMs)
+        fmt.Printf("%-20s %-15s %s\n", v.Hostname, k, v.RttMs)
 	for _, u := range v.UpstreamState {
-		fmt.Printf(" (%s %s)", u.Upstream, u.ActiveTime)
+		fmt.Printf(" @ %s since %s\n", u.Upstream, u.ActiveTime)
 	}
-	fmt.Printf("\n")
     }
 }
