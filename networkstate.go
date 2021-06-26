@@ -102,9 +102,17 @@ func main() {
 		hostState[host.Ip] = HostState{RttMs: host.RttMs, Hostname: host.Name}
         }
     }
-    // Fill data from Access Points
+    // Fill data from WiFi Access Points
     for _, client := range clients {
 	var host HostState
+        if len(client.IP) == 0 {
+            for _, dhcpData := range dhcp {
+                if client.MAC == dhcpData.MAC {
+                    client.IP = dhcpData.IP
+                    client.Hostname = dhcpData.Hostname
+                }
+            }
+        }
 	var ok bool
         if host, ok = hostState[client.IP] ; ok {
             // do nothing
@@ -143,7 +151,7 @@ func main() {
         })
     for _, k := range IPs {
         v := hostState[k]
-        fmt.Printf("%-20s %-15s %s\n", v.Hostname, k, v.RttMs)
+        fmt.Printf("%-20s %-15s ↺%s\n", v.Hostname, k, v.RttMs)
 	for _, u := range v.UpstreamState {
 		fmt.Printf(" @ %s since %s ↑/B: %v, ↓/B: %v, %vGHz %vdBm %vMbps\n",
 		               u.Upstream,
