@@ -58,9 +58,18 @@ type UpstreamState struct {
 	WiFi       WiFiParam
 }
 
+type DHCPLease struct {
+  ExpirationTime   int64  `yaml:"ExpirationTime"`
+  MAC              string `yaml:"MAC"`
+  IP               string `yaml:"IP"`
+  Hostname         string `yaml:"Hostname"`
+  ClientIdentifier string `yaml:"ClientIdentifier"`
+}
+
 func main() {
-    pingerFilePtr := flag.String("ping","ping.json","Output file from pinger")
-    wificlientsFilePtr := flag.String("wifi","wifi.yml","Output file from wificlients")
+    pingerFilePtr := flag.String("ping","ping.json","Output file from monitor-ping")
+    wificlientsFilePtr := flag.String("wifi","wifi.yml","Output file from monitor-wifi")
+    dhcpFilePtr := flag.String("dhcp","dhcp.yml","Output file from monitor-dhcp")
     flag.Parse()
 
     b, err := ioutil.ReadFile(*pingerFilePtr)
@@ -76,6 +85,13 @@ func main() {
     }
     var clients []NetworkClient
     yaml.Unmarshal(b, &clients)
+
+    b, err = ioutil.ReadFile(*dhcpFilePtr)
+    if err != nil {
+        log.Fatal(err)
+    }
+    var dhcp []DHCPLease
+    yaml.Unmarshal(b, &dhcp)
 
     // Combined database
     hostState := make(map[string]HostState)
