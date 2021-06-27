@@ -141,7 +141,6 @@ func main() {
     for k, _ := range hostState {
         IPs = append(IPs, k)
     }
-    sort.Strings(IPs)
     // sort slice IPs according to the actual IP value
     sort.Slice(
         IPs,
@@ -151,9 +150,13 @@ func main() {
         })
     for _, k := range IPs {
         v := hostState[k]
-        fmt.Printf("%-20s %-15s ↺%s\n", v.Hostname, k, v.RttMs)
+	PingLabel := "↺"
+        if v.RttMs == "" {
+            PingLabel = ""
+        }
+        fmt.Printf("%-20s %-15s %-17s %s%s\n", v.Hostname, k, v.MAC, PingLabel, v.RttMs)
 	for _, u := range v.UpstreamState {
-		fmt.Printf(" @ %s since %s ↑/B: %v, ↓/B: %v, %vGHz %vdBm %vMbps\n",
+		fmt.Printf(" @ %s from %s ↑/B: %v, ↓/B: %v, %vGHz %vdBm %vMbps\n",
 		               u.Upstream,
 			                strings.Replace(u.ActiveTime, " days", "d", 1),
 					            u.Up,
