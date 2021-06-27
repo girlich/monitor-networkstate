@@ -156,7 +156,7 @@ func main() {
         }
         fmt.Printf("%-20s %-15s %-17s %s%s\n", v.Hostname, k, v.MAC, PingLabel, v.RttMs)
 	for _, u := range v.UpstreamState {
-		fmt.Printf(" @ %s from %s ↑/B: %v, ↓/B: %v, %vGHz %vdBm %vMbps\n",
+		fmt.Printf(" @ %s from %s ↑%v ↓%v, %vGHz %vdBm %vMbps\n",
 		               u.Upstream,
 			                strings.Replace(u.ActiveTime, " days", "d", 1),
 					            u.Up,
