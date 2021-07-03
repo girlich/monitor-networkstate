@@ -1,2 +1,3 @@
 # networkstate
-combine wificlients and pinger to get a complete overview of the current network state
+Combine monitor-wifi, monitor-ping, and monitor-dhcp to get a complete
+overview of the current network state.
