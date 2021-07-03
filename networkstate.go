@@ -113,12 +113,8 @@ func main() {
                 }
             }
         }
-	var ok bool
-        if host, ok = hostState[client.IP] ; ok {
-            // do nothing
-        } else {
-            // do nothing
-        }
+        // If there is already an entry from ping, get its data out
+        host, _ = hostState[client.IP]
 	// Common data
         host.Hostname = client.Hostname
         host.MAC = client.MAC
@@ -148,6 +144,7 @@ func main() {
             return bytes.Compare(
               net.ParseIP(IPs[i]), net.ParseIP(IPs[j]))<0
         })
+    // loop over the sorted IPs
     for _, k := range IPs {
         v := hostState[k]
 	PingLabel := "↺"
