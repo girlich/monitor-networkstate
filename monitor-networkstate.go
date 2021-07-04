@@ -100,10 +100,10 @@ func main() {
 	// Fill data from ping
 	for _, host := range network.Hosts {
 		if host.Answer {
-			hostState[host.Ip] = HostState {
-				MAC: strings.Replace(strings.ToLower(host.MAC), "-", ":", 5),
-				RttMs: host.RttMs,
-				Hostname: host.Name }
+			hostState[host.Ip] = HostState{
+				MAC:      strings.Replace(strings.ToLower(host.MAC), "-", ":", 5),
+				RttMs:    host.RttMs,
+				Hostname: host.Name}
 		}
 	}
 	// Fill data from WiFi Access Points
