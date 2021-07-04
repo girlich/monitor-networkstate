@@ -18,6 +18,7 @@ type Host struct {
 	Name   string `yaml:"name"`
 	Answer bool   `yaml:"answer"`
 	RttMs  string `yaml:"rtt"`
+	MAC    string `yaml:"mac"`
 }
 
 type Network struct {
@@ -99,13 +100,7 @@ func main() {
 	// Fill data from ping
 	for _, host := range network.Hosts {
 		if host.Answer {
-			var MAC string
-			for _, dhcpData := range dhcp {
-				if host.Ip == dhcpData.IP {
-					MAC = dhcpData.MAC
-				}
-			}
-			hostState[host.Ip] = HostState{MAC: MAC, RttMs: host.RttMs, Hostname: host.Name}
+			hostState[host.Ip] = HostState{MAC: host.MAC, RttMs: host.RttMs, Hostname: host.Name}
 		}
 	}
 	// Fill data from WiFi Access Points
