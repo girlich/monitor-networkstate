@@ -93,13 +93,19 @@ func main() {
 	var dhcp []DHCPLease
 	yaml.Unmarshal(b, &dhcp)
 
-	// Combined database
+	// Empty combined database, key is IP
 	hostState := make(map[string]HostState)
 
 	// Fill data from ping
 	for _, host := range network.Hosts {
 		if host.Answer {
-			hostState[host.Ip] = HostState{RttMs: host.RttMs, Hostname: host.Name}
+			var MAC string
+			for _, dhcpData := range dhcp {
+				if host.Ip == dhcpData.IP {
+					MAC = dhcpData.MAC
+				}
+			}
+			hostState[host.Ip] = HostState{MAC: MAC, RttMs: host.RttMs, Hostname: host.Name}
 		}
 	}
 	// Fill data from WiFi Access Points
