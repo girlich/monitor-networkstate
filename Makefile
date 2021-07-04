@@ -1,4 +1,4 @@
-B=networkstate
+B=monitor-networkstate
 ARCHS=amd64 arm
 ADD_arm=GOARM=5
 BINS=$(addprefix $(B)_,$(ARCHS))

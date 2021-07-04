@@ -1,4 +1,4 @@
-module github.com/girlich/networkstate
+module github.com/girlich/monitor-networkstate
 
 go 1.16
 

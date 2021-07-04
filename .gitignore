@@ -1,4 +1,4 @@
-networkstate
-networkstate_arm
-networkstate_amd64
+monitor-networkstate
+monitor-networkstate_arm
+monitor-networkstate_amd64
 
